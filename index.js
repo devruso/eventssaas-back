@@ -1,6 +1,7 @@
 const cors = require("cors");
 require("dotenv").config();
 const express = require("express");
+
 const { connection, authenticate } = require("./db/db");
 
 const authRoutes = require("./routes/auth.routes");
@@ -22,10 +23,16 @@ const routeSuperAdmin = require("./routes/superadmin");
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000" }));
+const corsOptions = {
+  origin: "http://localhost:3000",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
+};
+
+app.use(cors(corsOptions));
 
 // Definir as rotas
-app.use('/auth', authRoutes);
+app.use('/auth',authRoutes);
 app.use(routeLocations);
 app.use(routeUsers);
 app.use(routeEvets);
@@ -40,8 +47,8 @@ app.use(routeMedias);
 app.use(routeAdmins);
 app.use(routeOrganizadores);
 app.use(routeSuperAdmin);
-
 app.use(errors());
+
 authenticate(connection);
 connection.sync();
 
